@@ -5,8 +5,9 @@
   "main": "server.ts",
   "scripts": {
     "dev": "tsx watch server.ts",
-    "build": "tsup server.ts --clean --out-dir dist --format esm",
-    "start": "node dist/server.js"
+    "build": "webpack --mode production",
+    "build:dev": "webpack --mode development",
+    "start": "node dist/bundle.js"
   },
   "packageManager": "pnpm@10.17.0",
   "devDependencies": {

@@ -32,7 +32,7 @@ jobs:
         run: pnpm run build
 
       - name: Rename output file
-        run: cp dist/server.js index.js
+        run: cp dist/bundle.js index.js
 
       - name: Create GitHub Release
         uses: softprops/action-gh-release@v2
