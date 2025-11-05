@@ -18,6 +18,10 @@ module.exports = {
           parse: JSON.parse,
         },
       },
+      {
+        test: /\.html$/,
+        type: "asset/source",
+      },
     ],
   },
   resolve: {

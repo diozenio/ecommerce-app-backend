@@ -1,11 +1,11 @@
 import fastify from "fastify";
-import { readFileSync } from "fs";
 
 const app = fastify();
 
 import { v4 as uuidv4 } from "uuid";
 import { faker } from "@faker-js/faker";
 import data from "./data.json";
+import htmlTemplate from "./html-template";
 
 interface User {
   id: string;
@@ -43,12 +43,7 @@ const products: Product[] = data.products.map((product) => ({
 }));
 
 app.get("/", (_, res) => {
-  try {
-    const html = readFileSync("./index.html", "utf-8");
-    res.type("text/html").status(200).send(html);
-  } catch (error) {
-    res.status(500).send({ message: "Error reading index.html" });
-  }
+  res.type("text/html").status(200).send(htmlTemplate);
 });
 
 app.post("/login", (req, res) => {

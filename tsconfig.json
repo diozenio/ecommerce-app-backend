@@ -15,6 +15,6 @@
     "declaration": false,
     "sourceMap": false
   },
-  "include": ["server.ts", "data.json"],
+  "include": ["server.ts", "data.json", "*.d.ts"],
   "exclude": ["node_modules", "dist"]
 }
