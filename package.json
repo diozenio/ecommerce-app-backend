@@ -1,14 +1,14 @@
 {
   "name": "ecommerce-app-backend",
-  "packageManager": "pnpm@10.17.0",
   "version": "1.0.0",
   "type": "module",
   "main": "server.ts",
   "scripts": {
     "dev": "tsx watch server.ts",
     "build": "tsup server.ts --clean --out-dir dist --format esm",
-    "release": "pnpm build && pnpm pkg"
+    "start": "node dist/server.js"
   },
+  "packageManager": "pnpm@10.17.0",
   "devDependencies": {
     "@faker-js/faker": "^10.1.0",
     "@types/node": "^24.10.0",
