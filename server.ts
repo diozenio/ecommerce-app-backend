@@ -1,4 +1,5 @@
 import fastify from "fastify";
+import { readFileSync } from "fs";
 
 const app = fastify();
 
@@ -40,6 +41,15 @@ const products: Product[] = data.products.map((product) => ({
   ...product,
   sizes: product.sizes.map((size) => size as UIProductCardCartSize),
 }));
+
+app.get("/", (_, res) => {
+  try {
+    const html = readFileSync("./index.html", "utf-8");
+    res.type("text/html").status(200).send(html);
+  } catch (error) {
+    res.status(500).send({ message: "Error reading index.html" });
+  }
+});
 
 app.post("/login", (req, res) => {
   const { email, password } = req.body as { email: string; password: string };

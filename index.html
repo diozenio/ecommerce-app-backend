@@ -1,0 +1,1090 @@
+<!DOCTYPE html>
+<html lang="en">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>E-commerce App Backend</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Google+Sans+Code:ital,wght@0,300..800;1,300..800&display=swap"
+      rel="stylesheet"
+    />
+    <link
+      rel="stylesheet"
+      href="https://unpkg.com/prismjs/themes/prism-tomorrow.css"
+    />
+    <script src="https://unpkg.com/prismjs/prism.js"></script>
+    <script src="https://unpkg.com/prismjs/components/prism-json.min.js"></script>
+    <style>
+      * {
+        margin: 0;
+        padding: 0;
+        box-sizing: border-box;
+      }
+
+      :root {
+        --bg-primary: #0f0f0f;
+        --bg-secondary: #1a1a1a;
+        --bg-tertiary: #242424;
+        --bg-card: #1e1e1e;
+        --text-primary: #e4e4e7;
+        --text-secondary: #a1a1aa;
+        --text-muted: #71717a;
+        --accent-primary: #1ed483;
+        --accent-secondary: #4ade80;
+        --accent-hover: #16a34a;
+        --border-color: #27272a;
+        --border-light: #3f3f46;
+        --code-bg: #1a1a1a;
+        --code-border: #27272a;
+        --code-text: #4ade80;
+        --success-bg: rgba(30, 212, 131, 0.1);
+        --success-border: #1ed483;
+        --error-bg: rgba(239, 68, 68, 0.1);
+        --error-border: #ef4444;
+        --warning-bg: rgba(251, 191, 36, 0.1);
+        --warning-border: #fbbf24;
+      }
+
+      body {
+        font-family: "Google Sans Code", -apple-system, BlinkMacSystemFont,
+          "Segoe UI", Roboto, Oxygen, Ubuntu, Cantarell, sans-serif;
+        line-height: 1.7;
+        color: var(--text-primary);
+        background: var(--bg-primary);
+        min-height: 100vh;
+        padding: 0;
+        -webkit-font-smoothing: antialiased;
+        -moz-osx-font-smoothing: grayscale;
+        text-rendering: optimizeLegibility;
+        font-feature-settings: "kern" 1, "liga" 1, "calt" 1;
+      }
+
+      .container {
+        max-width: 1400px;
+        margin: 0 auto;
+        background: transparent;
+        padding: 80px 48px;
+        position: relative;
+      }
+
+      .main-content {
+        max-width: 900px;
+        margin: 0 auto;
+      }
+
+      h1 {
+        color: var(--text-primary);
+        font-size: 3rem;
+        font-weight: 800;
+        margin-bottom: 16px;
+        letter-spacing: -0.04em;
+        line-height: 1.1;
+        font-feature-settings: "ss01" 1;
+      }
+
+      h1 + p {
+        margin-bottom: 32px;
+      }
+
+      h2 {
+        color: var(--text-primary);
+        font-size: 2.25rem;
+        font-weight: 700;
+        margin-top: 80px;
+        margin-bottom: 32px;
+        padding-top: 32px;
+        border-top: 1px solid var(--border-color);
+        letter-spacing: -0.03em;
+        line-height: 1.2;
+        font-feature-settings: "ss01" 1;
+      }
+
+      h3 {
+        color: var(--accent-primary);
+        font-size: 1.5rem;
+        font-weight: 600;
+        margin-top: 56px;
+        margin-bottom: 24px;
+        letter-spacing: -0.02em;
+        line-height: 1.3;
+      }
+
+      h4 {
+        color: var(--text-primary);
+        font-size: 1.125rem;
+        font-weight: 600;
+        margin-top: 0;
+        margin-bottom: 16px;
+        letter-spacing: -0.01em;
+      }
+
+      p {
+        margin-bottom: 24px;
+        color: var(--text-secondary);
+        font-size: 1.0625rem;
+        line-height: 1.75;
+        max-width: 65ch;
+        font-weight: 400;
+        letter-spacing: -0.01em;
+      }
+
+      ul,
+      ol {
+        margin-left: 0;
+        margin-bottom: 32px;
+        padding-left: 24px;
+      }
+
+      li {
+        margin-bottom: 16px;
+        color: var(--text-secondary);
+        line-height: 1.75;
+        padding-left: 8px;
+      }
+
+      ul li::marker {
+        color: var(--accent-primary);
+      }
+
+      a {
+        color: var(--accent-primary);
+        text-decoration: none;
+        transition: all 0.2s ease;
+        font-weight: 500;
+        letter-spacing: -0.01em;
+      }
+
+      a:hover {
+        color: var(--accent-hover);
+        text-decoration: underline;
+        text-decoration-color: var(--accent-hover);
+        text-underline-offset: 3px;
+      }
+
+      code {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        padding: 3px 8px;
+        border-radius: 6px;
+        font-family: "Google Sans Code", "SF Mono", "Monaco", "Inconsolata",
+          "Roboto Mono", "Fira Code", "Courier New", monospace;
+        font-size: 0.875em;
+        color: var(--code-text);
+        font-weight: 500;
+        font-feature-settings: "liga" 1, "calt" 1;
+      }
+
+      pre {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        color: var(--text-primary);
+        padding: 24px;
+        border-radius: 8px;
+        overflow-x: auto;
+        margin: 28px 0;
+        position: relative;
+      }
+
+      pre code {
+        background: none;
+        border: none;
+        color: var(--text-primary);
+        padding: 0;
+        font-size: 0.875rem;
+        line-height: 1.7;
+        font-family: "Google Sans Code", "SF Mono", "Monaco", "Inconsolata",
+          "Roboto Mono", "Fira Code", "Courier New", monospace;
+        font-feature-settings: "liga" 1, "calt" 1;
+      }
+
+      .toc {
+        background: transparent;
+        border: none;
+        padding: 0;
+        border-radius: 0;
+        position: fixed;
+        top: 80px;
+        width: 240px;
+        max-height: calc(100vh - 160px);
+        overflow-y: auto;
+        transition: all 0.2s ease;
+        z-index: 100;
+        left: calc(50% + 500px);
+      }
+
+      @media (max-width: 1600px) {
+        .toc {
+          left: auto;
+          right: 24px;
+        }
+      }
+
+      .toc h2 {
+        margin-top: 0;
+        border-top: none;
+        padding-top: 0;
+        color: var(--text-secondary);
+        font-size: 0.75rem;
+        margin-bottom: 16px;
+        font-weight: 600;
+        letter-spacing: 0.05em;
+        text-transform: uppercase;
+        opacity: 0.7;
+      }
+
+      .toc ul {
+        list-style: none;
+        margin-left: 0;
+        padding-left: 0;
+      }
+
+      .toc li {
+        margin-bottom: 4px;
+        padding-left: 0;
+      }
+
+      .toc a {
+        color: var(--text-muted);
+        font-weight: 400;
+        font-size: 0.8125rem;
+        transition: all 0.2s ease;
+        display: block;
+        padding: 4px 0;
+        text-decoration: none;
+        line-height: 1.5;
+      }
+
+      .toc a:hover {
+        color: var(--text-secondary);
+      }
+
+      .toc a.active {
+        color: var(--text-primary);
+        border-left: 2px solid var(--accent-primary);
+        padding-left: 12px;
+        padding-top: 6px;
+        padding-bottom: 6px;
+        margin-top: -4px;
+        margin-bottom: -4px;
+        font-weight: 500;
+      }
+
+      .toc ul ul {
+        margin-left: 16px;
+        margin-top: 4px;
+        margin-bottom: 0;
+      }
+
+      .toc ul ul li {
+        margin-bottom: 4px;
+      }
+
+      .toc ul ul a {
+        font-size: 0.75rem;
+        color: var(--text-muted);
+        font-weight: 400;
+      }
+
+      strong {
+        color: var(--text-primary);
+        font-weight: 600;
+      }
+
+      .note {
+        background: var(--warning-bg);
+        border: 1px solid var(--warning-border);
+        padding: 20px 24px;
+        margin: 32px 0;
+        border-radius: 8px;
+        color: var(--text-primary);
+      }
+
+      .note strong {
+        color: var(--warning-border);
+        font-weight: 600;
+      }
+
+      .note p {
+        margin-bottom: 0;
+      }
+
+      .endpoint {
+        background: var(--bg-card);
+        border: 1px solid var(--border-color);
+        padding: 32px;
+        border-radius: 12px;
+        margin: 32px 0;
+        transition: all 0.2s ease;
+      }
+
+      .endpoint:hover {
+        border-color: var(--border-light);
+      }
+
+      .endpoint h4 {
+        margin-top: 0;
+        margin-bottom: 20px;
+        color: var(--accent-primary);
+        font-family: "Google Sans Code", "SF Mono", "Monaco", "Inconsolata",
+          "Fira Code", monospace;
+        font-size: 1rem;
+        font-weight: 600;
+        letter-spacing: -0.01em;
+        padding: 8px 12px;
+        background: rgba(30, 212, 131, 0.1);
+        border-radius: 6px;
+        display: inline-block;
+        border: 1px solid rgba(30, 212, 131, 0.2);
+        font-feature-settings: "liga" 1, "calt" 1;
+      }
+
+      .endpoint p {
+        margin-bottom: 20px;
+        max-width: none;
+      }
+
+      .endpoint > p:first-of-type {
+        margin-top: 0;
+        font-size: 0.9375rem;
+        color: var(--text-secondary);
+      }
+
+      .response {
+        background: var(--success-bg);
+        border: 1px solid var(--success-border);
+        padding: 20px 24px;
+        margin: 20px 0;
+        border-radius: 8px;
+        color: var(--text-primary);
+      }
+
+      .response strong {
+        color: var(--success-border);
+        font-weight: 600;
+        font-size: 0.9375rem;
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      .response p {
+        margin-bottom: 0;
+      }
+
+      .error {
+        background: var(--error-bg);
+        border: 1px solid var(--error-border);
+        padding: 20px 24px;
+        margin: 20px 0;
+        border-radius: 8px;
+        color: var(--text-primary);
+      }
+
+      .error strong {
+        color: var(--error-border);
+        font-weight: 600;
+        font-size: 0.9375rem;
+        display: block;
+        margin-bottom: 12px;
+      }
+
+      .error ul {
+        margin-top: 12px;
+        margin-bottom: 0;
+      }
+
+      .error code {
+        color: var(--error-border);
+        background: rgba(239, 68, 68, 0.15);
+        border-color: rgba(239, 68, 68, 0.3);
+      }
+
+      .structure {
+        background: var(--code-bg);
+        border: 1px solid var(--code-border);
+        padding: 24px;
+        border-radius: 8px;
+        font-family: "Google Sans Code", "SF Mono", "Monaco", "Inconsolata",
+          "Fira Code", monospace;
+        overflow-x: auto;
+        color: var(--text-secondary);
+        font-size: 0.875rem;
+        line-height: 1.8;
+        font-feature-settings: "liga" 1, "calt" 1;
+      }
+
+      .structure p {
+        margin: 0;
+        padding: 0;
+      }
+
+      /* Scrollbar styling */
+      ::-webkit-scrollbar {
+        width: 10px;
+        height: 10px;
+      }
+
+      ::-webkit-scrollbar-track {
+        background: var(--bg-secondary);
+      }
+
+      ::-webkit-scrollbar-thumb {
+        background: var(--border-light);
+        border-radius: 5px;
+      }
+
+      ::-webkit-scrollbar-thumb:hover {
+        background: var(--accent-primary);
+      }
+
+      .toc::-webkit-scrollbar {
+        width: 4px;
+      }
+
+      .toc::-webkit-scrollbar-track {
+        background: transparent;
+      }
+
+      .toc::-webkit-scrollbar-thumb {
+        background: var(--border-color);
+        border-radius: 2px;
+      }
+
+      .toc::-webkit-scrollbar-thumb:hover {
+        background: var(--border-light);
+      }
+
+      /* Smooth scroll */
+      html {
+        scroll-behavior: smooth;
+      }
+
+      /* Selection */
+      ::selection {
+        background: var(--accent-primary);
+        color: var(--bg-primary);
+      }
+
+      @media (max-width: 1200px) {
+        .toc {
+          display: none;
+        }
+
+        .main-content {
+          padding-right: 0;
+        }
+      }
+
+      @media (max-width: 1400px) {
+        .toc {
+          width: 220px;
+        }
+      }
+
+      @media (max-width: 768px) {
+        .container {
+          padding: 48px 24px;
+          flex-direction: column;
+        }
+
+        .main-content {
+          margin-right: 0;
+        }
+
+        h1 {
+          font-size: 2.5rem;
+          line-height: 1.2;
+        }
+
+        h2 {
+          font-size: 1.875rem;
+          margin-top: 56px;
+          padding-top: 24px;
+        }
+
+        h3 {
+          font-size: 1.375rem;
+          margin-top: 40px;
+        }
+
+        p {
+          font-size: 1rem;
+        }
+
+        .toc {
+          position: relative;
+          right: auto;
+          top: auto;
+          width: 100%;
+          max-height: none;
+          display: block;
+          padding: 28px;
+          margin: 32px 0 48px 0;
+        }
+
+        .endpoint {
+          padding: 24px;
+          margin: 24px 0;
+        }
+
+        pre {
+          padding: 20px;
+          font-size: 0.8125rem;
+        }
+      }
+    </style>
+  </head>
+  <body>
+    <div class="container">
+      <div class="main-content">
+        <h1>🛒 E-commerce App Backend</h1>
+
+        <p>
+          A RESTful API backend for an e-commerce application built with Fastify
+          and TypeScript. This backend provides endpoints for user
+          authentication, product management, category handling, order tracking,
+          tax calculations, and image serving.
+        </p>
+
+        <h2 id="features">✨ Features</h2>
+        <ul>
+          <li>
+            <strong>User Authentication</strong>: Login and signup endpoints for
+            user management
+          </li>
+          <li>
+            <strong>Product Management</strong>: Retrieve products with details
+            including sizes, prices, images, and categories
+          </li>
+          <li>
+            <strong>Category Management</strong>: Browse and filter products by
+            categories
+          </li>
+          <li>
+            <strong>Order Tracking</strong>: Check order status with real-time
+            updates
+          </li>
+          <li>
+            <strong>Tax Calculation</strong>: Dynamic VAT and shipping fee
+            calculation
+          </li>
+          <li>
+            <strong>Image Serving</strong>: Serve product images stored as
+            base64 encoded data
+          </li>
+        </ul>
+
+        <h2 id="prerequisites">📋 Prerequisites</h2>
+        <ul>
+          <li>Node.js (v14 or higher)</li>
+          <li>pnpm 10.17.0</li>
+        </ul>
+
+        <h2 id="installation">🔧 Installation</h2>
+        <p>
+          This project uses GitHub Actions to automatically create releases when
+          code is pushed to the <code>main</code> branch. Each release includes
+          a pre-built <code>index.js</code> file that you can download and run
+          directly.
+        </p>
+
+        <h3>Downloading and Running</h3>
+        <ol>
+          <li>
+            Go to the
+            <a
+              href="https://github.com/diozenio/ecommerce-app-backend/releases"
+              target="_blank"
+              >Releases page</a
+            >
+            on GitHub
+          </li>
+          <li>Download the latest release's <code>index.js</code> file</li>
+          <li>Run the server using Node.js:</li>
+        </ol>
+        <pre><code>node index.js</code></pre>
+        <p>The server will start on <code>http://localhost:3000</code>.</p>
+        <div class="note">
+          <strong>Note:</strong> The releases are automatically generated by the
+          GitHub Actions workflow, which builds the project and packages it as
+          <code>index.js</code> for easy distribution.
+        </div>
+
+        <h2 id="development-setup">🛠️ Development Setup</h2>
+        <p>If you want to build and run the project from source:</p>
+        <ol>
+          <li>Clone the repository:</li>
+        </ol>
+        <pre><code>git clone https://github.com/diozenio/ecommerce-app-backend
+cd ecommerce-app-backend</code></pre>
+        <ol start="2">
+          <li>Install dependencies:</li>
+        </ol>
+        <pre><code>pnpm install</code></pre>
+
+        <h2 id="usage">🚀 Usage</h2>
+        <h3>Development Mode</h3>
+        <p>Run the server in development mode with hot reload:</p>
+        <pre><code>pnpm dev</code></pre>
+        <p>
+          The server will start on <code>http://localhost:3000</code> with
+          automatic reload on file changes.
+        </p>
+
+        <h3>Production Build</h3>
+        <p>Build the production bundle:</p>
+        <pre><code>pnpm build</code></pre>
+        <p>Or build for development:</p>
+        <pre><code>pnpm build:dev</code></pre>
+
+        <h3>Start Production Server</h3>
+        <p>After building, start the production server:</p>
+        <pre><code>pnpm start</code></pre>
+        <p>
+          The server will be available at <code>http://localhost:3000</code>.
+        </p>
+
+        <h2 id="api-endpoints">📡 API Endpoints</h2>
+
+        <h3 id="authentication">🔐 Authentication</h3>
+
+        <div class="endpoint" id="authentication-login">
+          <h4>POST /login</h4>
+          <p>Authenticate a user with email and password.</p>
+          <p><strong>Request Body:</strong></p>
+          <pre><code class="language-json">{
+  "email": "user@example.com",
+  "password": "password123"
+}</code></pre>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">{
+  "message": "Login successful",
+  "user": {
+    "id": "uuid",
+    "fullName": "John Doe",
+    "email": "user@example.com",
+    "password": "password123"
+  }
+}</code></pre>
+          </div>
+          <div class="error">
+            <p><strong>Error Responses:</strong></p>
+            <ul>
+              <li><code>400</code>: Email and password are required</li>
+              <li><code>401</code>: Invalid credentials</li>
+            </ul>
+          </div>
+        </div>
+
+        <div class="endpoint" id="authentication-signup">
+          <h4>POST /signup</h4>
+          <p>Register a new user account.</p>
+          <p><strong>Request Body:</strong></p>
+          <pre><code class="language-json">{
+  "fullName": "John Doe",
+  "email": "user@example.com",
+  "password": "password123"
+}</code></pre>
+          <div class="response">
+            <p><strong>Success Response (201):</strong></p>
+            <pre><code class="language-json">{
+  "message": "User created successfully",
+  "user": {
+    "id": "uuid",
+    "fullName": "John Doe",
+    "email": "user@example.com",
+    "password": "password123"
+  }
+}</code></pre>
+          </div>
+          <div class="error">
+            <p><strong>Error Responses:</strong></p>
+            <ul>
+              <li>
+                <code>400</code>: Full name, email and password are required, or
+                user already exists
+              </li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 id="categories">📂 Categories</h3>
+
+        <div class="endpoint">
+          <h4>GET /categories</h4>
+          <p>Retrieve all available categories.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">[
+  {
+    "id": "category-id",
+    "title": "Category Name"
+  }
+]</code></pre>
+          </div>
+        </div>
+
+        <div class="endpoint">
+          <h4>GET /categories/:id</h4>
+          <p>Retrieve a specific category by ID.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">{
+  "id": "category-id",
+  "title": "Category Name"
+}</code></pre>
+          </div>
+          <div class="error">
+            <p><strong>Error Response:</strong></p>
+            <ul>
+              <li><code>404</code>: Category not found</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 id="products">🛍️ Products</h3>
+
+        <div class="endpoint">
+          <h4>GET /products</h4>
+          <p>Retrieve all available products.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">[
+  {
+    "id": "product-id",
+    "title": "Product Name",
+    "sizes": ["SMALL", "MEDIUM", "LARGE"],
+    "price": 29.99,
+    "imageUrl": "image-url",
+    "category": {
+      "id": "category-id",
+      "title": "Category Name"
+    },
+    "discount": 0.1
+  }
+]</code></pre>
+          </div>
+        </div>
+
+        <div class="endpoint" id="products-get-by-id">
+          <h4>GET /products/:id</h4>
+          <p>Retrieve a specific product by ID.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">{
+  "id": "product-id",
+  "title": "Product Name",
+  "sizes": ["SMALL", "MEDIUM", "LARGE"],
+  "price": 29.99,
+  "imageUrl": "image-url",
+  "category": {
+    "id": "category-id",
+    "title": "Category Name"
+  },
+  "discount": 0.1
+}</code></pre>
+          </div>
+          <div class="error">
+            <p><strong>Error Response:</strong></p>
+            <ul>
+              <li><code>404</code>: Product not found</li>
+            </ul>
+          </div>
+        </div>
+
+        <h3 id="orders">📦 Orders</h3>
+
+        <div class="endpoint">
+          <h4>GET /orders/:id</h4>
+          <p>Retrieve order status by order ID.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">{
+  "status": "in_transit"
+}</code></pre>
+          </div>
+          <p><strong>Possible Status Values:</strong></p>
+          <ul>
+            <li><code>in_transit</code>: Order is being shipped</li>
+            <li><code>picked</code>: Order has been picked from warehouse</li>
+            <li><code>packing</code>: Order is being packed</li>
+          </ul>
+        </div>
+
+        <h3 id="taxes">💰 Taxes</h3>
+
+        <div class="endpoint">
+          <h4>GET /taxes</h4>
+          <p>Retrieve tax information including VAT and shipping fees.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">{
+  "vat": 0.08,
+  "shippingFee": 0.05
+}</code></pre>
+          </div>
+          <div class="note">
+            <strong>Note:</strong> Values are randomly generated for
+            demonstration purposes.
+          </div>
+        </div>
+
+        <h3 id="images">🖼️ Images</h3>
+
+        <div class="endpoint">
+          <h4>GET /images/:id</h4>
+          <p>Serve a product image by image ID.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <ul>
+              <li>Content-Type: <code>image/png</code></li>
+              <li>Body: PNG image buffer</li>
+            </ul>
+          </div>
+          <div class="error">
+            <p><strong>Error Response:</strong></p>
+            <ul>
+              <li><code>404</code>: Image not found</li>
+            </ul>
+          </div>
+        </div>
+
+        <h2 id="project-structure">📁 Project Structure</h2>
+        <div class="structure">
+          <div>ecommerce-app-backend/</div>
+          <div>├── dist/ # Compiled output (bundle.js)</div>
+          <div>├── images/ # Product image files</div>
+          <div>├── node_modules/ # Dependencies</div>
+          <div>
+            ├── data.json # Seed data (users, products, categories, images)
+          </div>
+          <div>├── server.ts # Main server file with all API routes</div>
+          <div>├── tsconfig.json # TypeScript configuration</div>
+          <div>├── webpack.config.cjs # Webpack build configuration</div>
+          <div>├── package.json # Project metadata and dependencies</div>
+          <div>└── pnpm-lock.yaml # Lock file for pnpm</div>
+        </div>
+
+        <h2 id="scripts">📜 Scripts</h2>
+        <ul>
+          <li>
+            <code>pnpm dev</code>: Start development server with hot reload
+            using
+            <code>tsx watch</code>
+          </li>
+          <li>
+            <code>pnpm build</code>: Build production bundle using Webpack
+          </li>
+          <li>
+            <code>pnpm build:dev</code>: Build development bundle using Webpack
+          </li>
+          <li>
+            <code>pnpm start</code>: Start production server from compiled
+            bundle
+          </li>
+        </ul>
+
+        <h2 id="tech-stack">⚙️ Tech Stack</h2>
+        <ul>
+          <li><strong>Runtime</strong>: Node.js</li>
+          <li><strong>Framework</strong>: Fastify 5.6.1</li>
+          <li><strong>Language</strong>: TypeScript 5.9.3</li>
+          <li><strong>Build Tool</strong>: Webpack 5.102.1</li>
+          <li><strong>Package Manager</strong>: pnpm 10.17.0</li>
+          <li>
+            <strong>Dependencies</strong>:
+            <ul>
+              <li><code>uuid</code>: For generating unique identifiers</li>
+              <li>
+                <code>@faker-js/faker</code>: For generating mock data (orders
+                and taxes)
+              </li>
+            </ul>
+          </li>
+        </ul>
+
+        <h2 id="data-structure">💾 Data Structure</h2>
+        <p>
+          The application uses <code>data.json</code> as the data source,
+          containing:
+        </p>
+        <ul>
+          <li>
+            <strong>users</strong>: Array of user objects with authentication
+            credentials
+          </li>
+          <li><strong>categories</strong>: Array of product categories</li>
+          <li>
+            <strong>products</strong>: Array of products with details, prices,
+            and category associations
+          </li>
+          <li><strong>images</strong>: Array of base64-encoded image data</li>
+        </ul>
+
+        <h2 id="license">📄 License</h2>
+        <p>
+          This project is licensed under the MIT License - see the
+          <a
+            href="https://github.com/diozenio/ecommerce-app-backend/blob/main/LICENSE"
+            target="_blank"
+            >LICENSE</a
+          >
+          file for details.
+        </p>
+      </div>
+
+      <div class="toc">
+        <h2>On this page</h2>
+        <ul>
+          <li><a href="#features">Features</a></li>
+          <li><a href="#prerequisites">Prerequisites</a></li>
+          <li><a href="#installation">Installation</a></li>
+          <li><a href="#development-setup">Development Setup</a></li>
+          <li><a href="#usage">Usage</a></li>
+          <li>
+            <a href="#api-endpoints">API Endpoints</a>
+            <ul>
+              <li><a href="#authentication">Authentication</a></li>
+              <li><a href="#categories">Categories</a></li>
+              <li><a href="#products">Products</a></li>
+              <li><a href="#orders">Orders</a></li>
+              <li><a href="#taxes">Taxes</a></li>
+              <li><a href="#images">Images</a></li>
+            </ul>
+          </li>
+          <li><a href="#project-structure">Project Structure</a></li>
+          <li><a href="#scripts">Scripts</a></li>
+          <li><a href="#tech-stack">Tech Stack</a></li>
+          <li><a href="#data-structure">Data Structure</a></li>
+          <li><a href="#license">License</a></li>
+        </ul>
+      </div>
+    </div>
+    <script>
+      // Highlight active TOC item when section appears on screen
+      const tocLinks = document.querySelectorAll(".toc a");
+      const sectionsH2 = document.querySelectorAll("h2[id]");
+      const sectionsH3 = document.querySelectorAll("h3[id]");
+      const allSections = [...sectionsH2, ...sectionsH3];
+
+      // Elements that should activate their parent section when visible
+      const productsGetById = document.getElementById("products-get-by-id");
+      const authenticationLogin = document.getElementById(
+        "authentication-login"
+      );
+      const authenticationSignup = document.getElementById(
+        "authentication-signup"
+      );
+
+      // Subcategories of API Endpoints
+      const apiEndpointsSubcategories = [
+        "authentication",
+        "categories",
+        "products",
+        "orders",
+        "taxes",
+        "images",
+      ];
+
+      function updateActiveTOC() {
+        const visibleSections = [];
+
+        allSections.forEach((section) => {
+          const rect = section.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+
+          if (isVisible) {
+            visibleSections.push({
+              id: section.getAttribute("id"),
+              top: rect.top,
+              isH3: section.tagName === "H3",
+            });
+          }
+        });
+
+        // Check if products-get-by-id endpoint is visible
+        if (productsGetById) {
+          const rect = productsGetById.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+
+          if (isVisible) {
+            visibleSections.push({
+              id: "products",
+              top: rect.top,
+              isH3: false,
+              isEndpoint: true,
+            });
+          }
+        }
+
+        // Check if authentication endpoints are visible
+        if (authenticationLogin) {
+          const rect = authenticationLogin.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+
+          if (isVisible) {
+            visibleSections.push({
+              id: "authentication",
+              top: rect.top,
+              isH3: false,
+              isEndpoint: true,
+            });
+          }
+        }
+
+        if (authenticationSignup) {
+          const rect = authenticationSignup.getBoundingClientRect();
+          const isVisible = rect.top < window.innerHeight && rect.bottom >= 0;
+
+          if (isVisible) {
+            visibleSections.push({
+              id: "authentication",
+              top: rect.top,
+              isH3: false,
+              isEndpoint: true,
+            });
+          }
+        }
+
+        // Remove active class from all links
+        tocLinks.forEach((link) => {
+          link.classList.remove("active");
+        });
+
+        // Activate visible sections
+        if (visibleSections.length > 0) {
+          // Sort by distance from top
+          visibleSections.sort((a, b) => a.top - b.top);
+
+          visibleSections.forEach((section) => {
+            // Activate the section itself
+            tocLinks.forEach((link) => {
+              const href = link.getAttribute("href");
+              if (href === `#${section.id}`) {
+                link.classList.add("active");
+              }
+            });
+
+            // If it's a subcategory of API Endpoints, also activate the parent
+            if (
+              (section.isH3 || section.isEndpoint) &&
+              apiEndpointsSubcategories.includes(section.id)
+            ) {
+              tocLinks.forEach((link) => {
+                const href = link.getAttribute("href");
+                if (href === "#api-endpoints") {
+                  link.classList.add("active");
+                }
+              });
+            }
+          });
+        }
+      }
+
+      window.addEventListener("scroll", updateActiveTOC);
+      window.addEventListener("load", updateActiveTOC);
+    </script>
+  </body>
+</html>
