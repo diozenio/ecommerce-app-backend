@@ -128,8 +128,8 @@ app.get("/orders/:id", (_, res) => {
 
 app.get("/taxes", (_, res) => {
   const taxes = {
-    vat: faker.number.float({ min: 0, max: 0.1 }),
-    shippingFee: faker.number.float({ min: 0, max: 0.1 }),
+    vat: faker.number.float({ min: 0.1, max: 0.2, fractionDigits: 2 }),
+    shippingFee: faker.number.int({ min: 50, max: 100 }),
   };
   res.status(200).send(taxes);
 });
