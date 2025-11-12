@@ -124,6 +124,7 @@ const orders: Order[] = data.orders.map((order: any) => {
     imageUrl: product.imageUrl,
     status: order.status as OrderStatus,
     rating: order.rating,
+    product_id: order.product_id,
   };
 });
 
