@@ -46,12 +46,13 @@ interface Product {
 
 interface Order {
   id: string;
-  title: string;
-  size: UIProductCardCartSize;
-  price: number;
-  imageUrl: string;
+  title?: string;
+  size?: UIProductCardCartSize;
+  price?: number;
+  imageUrl?: string;
   status: OrderStatus;
-  rating?: number | null;
+  rating: number | null;
+  product_id: string;
 }
 
 interface LocationCoordinate {
