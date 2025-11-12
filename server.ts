@@ -90,6 +90,8 @@ export interface Root {
   categories: Category[];
   products: Product[];
   images: Image[];
+  orders: Order[];
+  orderTrackHistory: OrderDelivery[];
 }
 
 const data = json as Root;
