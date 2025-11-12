@@ -6,7 +6,7 @@ const BASE_URL = "http://10.0.2.2:3000";
 
 import { v4 as uuidv4 } from "uuid";
 import { faker } from "@faker-js/faker";
-import data from "./data.json";
+import json from "./data.json";
 import htmlTemplate from "./html-template";
 
 interface User {
@@ -80,6 +80,19 @@ interface OrderDelivery {
   deliveryPerson: DeliveryPerson | null;
   statusHistory: OrderDeliveryStatus[];
 }
+export interface Image {
+  id: string;
+  image: string;
+}
+
+export interface Root {
+  users: User[];
+  categories: Category[];
+  products: Product[];
+  images: Image[];
+}
+
+const data = json as Root;
 
 const users: User[] = data.users;
 const categories: Category[] = data.categories;
