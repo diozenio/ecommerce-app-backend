@@ -4,23 +4,40 @@ A RESTful API backend for an e-commerce application built with Fastify and TypeS
 
 ## Table of Contents
 
-- [✨ Features](#-features)
-- [📋 Prerequisites](#-prerequisites)
-- [🔧 Installation](#-installation)
-- [🛠️ Development Setup](#-development-setup)
-- [🚀 Usage](#-usage)
-- [📡 API Endpoints](#-api-endpoints)
-  - [🔐 Authentication](#-authentication)
-  - [📂 Categories](#-categories)
-  - [🛍️ Products](#️-products)
-  - [📦 Orders](#-orders)
-  - [💰 Taxes](#-taxes)
-  - [🖼️ Images](#️-images)
-- [📁 Project Structure](#-project-structure)
-- [📜 Scripts](#-scripts)
-- [⚙️ Tech Stack](#️-tech-stack)
-- [💾 Data Structure](#-data-structure)
-- [📄 License](#-license)
+- [E-commerce App Backend](#e-commerce-app-backend)
+  - [Table of Contents](#table-of-contents)
+  - [✨ Features](#-features)
+  - [📋 Prerequisites](#-prerequisites)
+  - [🔧 Installation](#-installation)
+    - [Downloading and Running](#downloading-and-running)
+  - [🛠️ Development Setup](#️-development-setup)
+  - [🚀 Usage](#-usage)
+    - [Development Mode](#development-mode)
+    - [Production Build](#production-build)
+    - [Start Production Server](#start-production-server)
+  - [📡 API Endpoints](#-api-endpoints)
+    - [🔐 Authentication](#-authentication)
+      - [POST /login](#post-login)
+      - [POST /signup](#post-signup)
+    - [📂 Categories](#-categories)
+      - [GET /categories](#get-categories)
+      - [GET /categories/:id](#get-categoriesid)
+    - [🛍️ Products](#️-products)
+      - [GET /products](#get-products)
+      - [GET /products/:id](#get-productsid)
+    - [📦 Orders](#-orders)
+      - [GET /orders](#get-orders)
+      - [GET /orders/:id](#get-ordersid)
+      - [GET /orders/:id/track](#get-ordersidtrack)
+    - [💰 Taxes](#-taxes)
+      - [GET /taxes](#get-taxes)
+    - [🖼️ Images](#️-images)
+      - [GET /images/:id](#get-imagesid)
+  - [📁 Project Structure](#-project-structure)
+  - [📜 Scripts](#-scripts)
+  - [⚙️ Tech Stack](#️-tech-stack)
+  - [💾 Data Structure](#-data-structure)
+  - [📄 License](#-license)
 
 ## ✨ Features
 
@@ -261,6 +278,26 @@ Retrieve a specific product by ID.
 
 ### 📦 Orders
 
+#### GET /orders
+
+Retrieve all available orders.
+
+**Success Response (200):**
+
+```json
+[
+  {
+    "id": "order-id",
+    "title": "Product Name",
+    "size": "MEDIUM",
+    "price": 29.99,
+    "imageUrl": "image-url",
+    "status": "IN_TRANSIT",
+    "rating": null
+  }
+]
+```
+
 #### GET /orders/:id
 
 Retrieve order status by order ID.
@@ -273,11 +310,44 @@ Retrieve order status by order ID.
 }
 ```
 
-**Possible Status Values:**
+#### GET /orders/:id/track
 
-- `in_transit`: Order is being shipped
-- `picked`: Order has been picked from warehouse
-- `packing`: Order is being packed
+Retrieve order tracking information by order ID.
+
+**Success Response (200):**
+
+```json
+{
+  "orderId": "order-id",
+  "currentLocation": {
+    "latitude": -23.5505,
+    "longitude": -46.6333,
+    "address": "Current Location Address"
+  },
+  "destination": {
+    "latitude": -23.5489,
+    "longitude": -46.6388,
+    "address": "Destination Address"
+  },
+  "deliveryPerson": {
+    "name": "Delivery Person Name",
+    "phone": "+55 11 98765-4321",
+    "photo": "photo-url"
+  },
+  "statusHistory": [
+    {
+      "status": "PACKING",
+      "location": "Location Address",
+      "timestamp": 1735689600000,
+      "isCompleted": true
+    }
+  ]
+}
+```
+
+**Error Response:**
+
+- `404`: Order tracking not found
 
 ### 💰 Taxes
 
@@ -318,7 +388,7 @@ ecommerce-app-backend/
 ├── dist/                 # Compiled output (bundle.js)
 ├── images/              # Product image files
 ├── node_modules/        # Dependencies
-├── data.json            # Seed data (users, products, categories, images)
+├── data.json            # Seed data (users, products, categories, orders, images)
 ├── server.ts            # Main server file with all API routes
 ├── tsconfig.json        # TypeScript configuration
 ├── webpack.config.cjs   # Webpack build configuration
@@ -351,6 +421,7 @@ The application uses `data.json` as the data source, containing:
 - **users**: Array of user objects with authentication credentials
 - **categories**: Array of product categories
 - **products**: Array of products with details, prices, and category associations
+- **orders**: Array of order objects with status, prices, and ratings
 - **images**: Array of base64-encoded image data
 
 ## 📄 License

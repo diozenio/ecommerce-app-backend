@@ -2,6 +2,8 @@ import fastify from "fastify";
 
 const app = fastify();
 
+const BASE_URL = "http://10.0.2.2:3000";
+
 import { v4 as uuidv4 } from "uuid";
 import { faker } from "@faker-js/faker";
 import data from "./data.json";
@@ -20,6 +22,13 @@ enum UIProductCardCartSize {
   LARGE = "LARGE",
 }
 
+enum OrderStatus {
+  PACKING = "PACKING",
+  PICKED = "PICKED",
+  IN_TRANSIT = "IN_TRANSIT",
+  DELIVERED = "DELIVERED",
+}
+
 interface Category {
   id: String;
   title: string;
@@ -35,12 +44,72 @@ interface Product {
   discount?: number;
 }
 
+interface Order {
+  id: string;
+  title: string;
+  size: UIProductCardCartSize;
+  price: number;
+  imageUrl: string;
+  status: OrderStatus;
+  rating?: number | null;
+}
+
+interface LocationCoordinate {
+  latitude: number;
+  longitude: number;
+  address: string | null;
+}
+
+interface DeliveryPerson {
+  name: string;
+  phone: string;
+  photo: string | null;
+}
+
+interface OrderDeliveryStatus {
+  status: OrderStatus;
+  location: string;
+  timestamp: number;
+  isCompleted: boolean;
+}
+
+interface OrderDelivery {
+  orderId: string;
+  currentLocation: LocationCoordinate;
+  destination: LocationCoordinate;
+  deliveryPerson: DeliveryPerson | null;
+  statusHistory: OrderDeliveryStatus[];
+}
+
 const users: User[] = data.users;
 const categories: Category[] = data.categories;
-const products: Product[] = data.products.map((product) => ({
-  ...product,
-  sizes: product.sizes.map((size) => size as UIProductCardCartSize),
-}));
+const products: Product[] = data.products.map((product) => {
+  const imageId =
+    product.imageUrl.split("/images/")[1]?.split("?")[0] ||
+    product.imageUrl.split("/images/")[1];
+  const imageUrl = imageId ? `${BASE_URL}/images/${imageId}` : product.imageUrl;
+
+  return {
+    ...product,
+    sizes: product.sizes.map((size) => size as UIProductCardCartSize),
+    imageUrl,
+  };
+});
+const orders: Order[] = data.orders.map((order: any) => {
+  const product = products.find((p) => p.id === order.product_id);
+  if (!product) {
+    throw new Error(`Product not found for order ${order.id}`);
+  }
+  return {
+    id: order.id,
+    title: product.title,
+    size: product.sizes[0] as UIProductCardCartSize,
+    price: product.price,
+    imageUrl: product.imageUrl,
+    status: order.status as OrderStatus,
+    rating: order.rating,
+  };
+});
 
 app.get("/", (_, res) => {
   res.type("text/html").status(200).send(htmlTemplate);
@@ -118,12 +187,29 @@ app.get("/products/:id", (req, res) => {
   res.status(200).send(product);
 });
 
+app.get("/orders", (_, res) => {
+  res.status(200).send(orders);
+});
+
 app.get("/orders/:id", (_, res) => {
   const order = {
     status: faker.helpers.arrayElement(["in_transit", "picked", "packing"]),
   };
 
   res.status(200).send(order);
+});
+
+app.get("/orders/:id/track", (req, res) => {
+  const { id } = req.params as { id: string };
+  const orderTrack = (data.orderTrackHistory as OrderDelivery[]).find(
+    (track) => track.orderId === id
+  );
+
+  if (!orderTrack) {
+    return res.status(404).send({ message: "Order tracking not found" });
+  }
+
+  res.status(200).send(orderTrack);
 });
 
 app.get("/taxes", (_, res) => {
@@ -146,6 +232,6 @@ app.get("/images/:id", (req, res) => {
   res.type("image/png").status(200).send(imageBuffer);
 });
 
-app.listen({ port: 3000 }, () => {
+app.listen({ port: 3000, host: "0.0.0.0" }, () => {
   console.log("Server is running on port http://localhost:3000");
 });

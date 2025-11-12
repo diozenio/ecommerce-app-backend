@@ -797,6 +797,25 @@ cd ecommerce-app-backend</code></pre>
         <h3 id="orders">📦 Orders</h3>
 
         <div class="endpoint">
+          <h4>GET /orders</h4>
+          <p>Retrieve all available orders.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">[
+  {
+    "id": "order-id",
+    "title": "Product Name",
+    "size": "MEDIUM",
+    "price": 29.99,
+    "imageUrl": "image-url",
+    "status": "IN_TRANSIT",
+    "rating": null
+  }
+]</code></pre>
+          </div>
+        </div>
+
+        <div class="endpoint">
           <h4>GET /orders/:id</h4>
           <p>Retrieve order status by order ID.</p>
           <div class="response">
@@ -805,12 +824,46 @@ cd ecommerce-app-backend</code></pre>
   "status": "in_transit"
 }</code></pre>
           </div>
-          <p><strong>Possible Status Values:</strong></p>
-          <ul>
-            <li><code>in_transit</code>: Order is being shipped</li>
-            <li><code>picked</code>: Order has been picked from warehouse</li>
-            <li><code>packing</code>: Order is being packed</li>
-          </ul>
+        </div>
+
+        <div class="endpoint">
+          <h4>GET /orders/:id/track</h4>
+          <p>Retrieve order tracking information by order ID.</p>
+          <div class="response">
+            <p><strong>Success Response (200):</strong></p>
+            <pre><code class="language-json">{
+  "orderId": "order-id",
+  "currentLocation": {
+    "latitude": -23.5505,
+    "longitude": -46.6333,
+    "address": "Current Location Address"
+  },
+  "destination": {
+    "latitude": -23.5489,
+    "longitude": -46.6388,
+    "address": "Destination Address"
+  },
+  "deliveryPerson": {
+    "name": "Delivery Person Name",
+    "phone": "+55 11 98765-4321",
+    "photo": "photo-url"
+  },
+  "statusHistory": [
+    {
+      "status": "PACKING",
+      "location": "Location Address",
+      "timestamp": 1735689600000,
+      "isCompleted": true
+    }
+  ]
+}</code></pre>
+          </div>
+          <div class="error">
+            <p><strong>Error Response:</strong></p>
+            <ul>
+              <li><code>404</code>: Order tracking not found</li>
+            </ul>
+          </div>
         </div>
 
         <h3 id="taxes">💰 Taxes</h3>
@@ -858,7 +911,7 @@ cd ecommerce-app-backend</code></pre>
           <div>├── images/ # Product image files</div>
           <div>├── node_modules/ # Dependencies</div>
           <div>
-            ├── data.json # Seed data (users, products, categories, images)
+            ├── data.json # Seed data (users, products, categories, orders, images)
           </div>
           <div>├── server.ts # Main server file with all API routes</div>
           <div>├── tsconfig.json # TypeScript configuration</div>
@@ -919,6 +972,10 @@ cd ecommerce-app-backend</code></pre>
           <li>
             <strong>products</strong>: Array of products with details, prices,
             and category associations
+          </li>
+          <li>
+            <strong>orders</strong>: Array of order objects with status, prices,
+            and ratings
           </li>
           <li><strong>images</strong>: Array of base64-encoded image data</li>
         </ul>
