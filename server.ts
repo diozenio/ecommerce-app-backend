@@ -81,9 +81,22 @@ interface OrderDelivery {
   deliveryPerson: DeliveryPerson | null;
   statusHistory: OrderDeliveryStatus[];
 }
+
+interface CartItem {
+  id: number;
+  quantity: number;
+  size: UIProductCardCartSize;
+  product: Product;
+}
+
 export interface Image {
   id: string;
   image: string;
+}
+
+interface CartData {
+  userId: string;
+  items: CartItem[];
 }
 
 export interface Root {
@@ -93,6 +106,7 @@ export interface Root {
   images: Image[];
   orders: Order[];
   orderTrackHistory: OrderDelivery[];
+  carts?: CartData[];
 }
 
 const data = json as Root;
@@ -127,6 +141,26 @@ const orders: Order[] = data.orders.map((order: any) => {
     product_id: order.product_id,
   };
 });
+
+const carts: Map<string, CartItem[]> = new Map();
+
+if (data.carts) {
+  data.carts.forEach((cartData) => {
+    const cartItems: CartItem[] = cartData.items.map((item) => {
+      const product = products.find((p) => p.id === item.product.id);
+      if (!product) {
+        throw new Error(`Product not found for cart item ${item.id}`);
+      }
+      return {
+        id: item.id,
+        quantity: item.quantity,
+        size: item.size as UIProductCardCartSize,
+        product,
+      };
+    });
+    carts.set(cartData.userId, cartItems);
+  });
+}
 
 app.get("/", (_, res) => {
   res.type("text/html").status(200).send(htmlTemplate);
@@ -229,12 +263,82 @@ app.get("/orders/:id/track", (req, res) => {
   res.status(200).send(orderTrack);
 });
 
-app.get("/taxes", (_, res) => {
+app.get("/cart", (req, res) => {
+  const { userId } = req.query as { userId?: string };
+
+  if (!userId) {
+    return res.status(400).send({ message: "User ID is required" });
+  }
+
+  const userCart = carts.get(userId) || [];
+  res.status(200).send(userCart);
+});
+
+app.get("/cart/taxes", (_, res) => {
   const taxes = {
     vat: faker.number.float({ min: 0.1, max: 0.2, fractionDigits: 2 }),
     shippingFee: faker.number.int({ min: 50, max: 100 }),
   };
   res.status(200).send(taxes);
+});
+
+app.put("/cart/:id", (req, res) => {
+  const { id } = req.params as { id: string };
+  const { quantity, size, product } = req.body as {
+    quantity: number;
+    size: UIProductCardCartSize;
+    product: Product;
+  };
+
+  if (!quantity || !size || !product) {
+    return res
+      .status(400)
+      .send({ message: "Quantity, size, and product are required" });
+  }
+
+  const cartItemId = parseInt(id);
+  let found = false;
+
+  for (const [userId, userCart] of carts.entries()) {
+    const itemIndex = userCart.findIndex((item) => item.id === cartItemId);
+    if (itemIndex !== -1) {
+      userCart[itemIndex] = {
+        id: cartItemId,
+        quantity,
+        size,
+        product,
+      };
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    return res.status(404).send({ message: "Cart item not found" });
+  }
+
+  res.status(200).send({ message: "Cart item updated successfully" });
+});
+
+app.delete("/cart/:id", (req, res) => {
+  const { id } = req.params as { id: string };
+  const cartItemId = parseInt(id);
+  let found = false;
+
+  for (const [userId, userCart] of carts.entries()) {
+    const itemIndex = userCart.findIndex((item) => item.id === cartItemId);
+    if (itemIndex !== -1) {
+      userCart.splice(itemIndex, 1);
+      found = true;
+      break;
+    }
+  }
+
+  if (!found) {
+    return res.status(404).send({ message: "Cart item not found" });
+  }
+
+  res.status(200).send({ message: "Cart item deleted successfully" });
 });
 
 app.get("/images/:id", (req, res) => {
