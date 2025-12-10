@@ -89,6 +89,11 @@ interface CartItem {
   product: Product;
 }
 
+interface SavedItem {
+  id: number;
+  product: Product;
+}
+
 export interface Image {
   id: string;
   image: string;
@@ -122,6 +127,7 @@ export interface Root {
   orderTrackHistory: OrderDelivery[];
   carts?: CartData[];
   notifications: Notification[];
+  saved?: SavedItem[];
 }
 
 const data = json as Root;
@@ -176,12 +182,26 @@ if (data.carts) {
     carts.set(cartData.userId, cartItems);
   });
 }
+
 const notifications: Notification[] = (
   data.notifications as Notification[]
 ).map((notification) => ({
   ...notification,
   category: notification.category as NotificationCategory,
 }));
+
+const savedItems: SavedItem[] = data.saved
+  ? data.saved.map((item) => {
+      const product = products.find((p) => p.id === item.product.id);
+      if (!product) {
+        throw new Error(`Product not found for saved item ${item.id}`);
+      }
+      return {
+        id: item.id,
+        product,
+      };
+    })
+  : [];
 
 app.get("/", (_, res) => {
   res.type("text/html").status(200).send(htmlTemplate);
@@ -424,6 +444,48 @@ app.delete("/notifications/:id", (req, res) => {
   }
 
   const deleted = notifications.splice(index, 1)[0];
+  res.status(200).send({ message: "Deleted successfully", deleted });
+});
+
+app.get("/saved", (_, res) => {
+  res.status(200).send(savedItems);
+});
+
+app.post("/saved", (req, res) => {
+  const { product } = req.body as { product: Product };
+
+  if (!product) {
+    return res.status(400).send({ message: "Product is required" });
+  }
+
+  const existingProduct = products.find((p) => p.id === product.id);
+  if (!existingProduct) {
+    return res.status(404).send({ message: "Product not found" });
+  }
+
+  const newSavedItem: SavedItem = {
+    id: savedItems.length ? savedItems[savedItems.length - 1].id + 1 : 1,
+    product: existingProduct,
+  };
+
+  savedItems.push(newSavedItem);
+
+  res.status(201).send(newSavedItem);
+});
+
+app.delete("/saved/:id", (req, res) => {
+  const { id: productId } = req.params as { id: string };
+
+  const deleted = savedItems.find((item) => item.product.id === productId);
+
+  if (!deleted) {
+    return res.status(404).send({ message: "Saved item not found" });
+  }
+
+  const index = savedItems.findIndex((item) => item.product.id === productId);
+
+  savedItems.splice(index, 1);
+
   res.status(200).send({ message: "Deleted successfully", deleted });
 });
 
