@@ -99,6 +99,20 @@ interface CartData {
   items: CartItem[];
 }
 
+enum NotificationCategory {
+  OFFER = "OFFER",
+  PAYMENT = "PAYMENT",
+  PROFILE = "PROFILE",
+}
+
+interface Notification {
+  id: number;
+  title: string;
+  subtitle: string;
+  category: NotificationCategory;
+  date: number;
+}
+
 export interface Root {
   users: User[];
   categories: Category[];
@@ -107,6 +121,7 @@ export interface Root {
   orders: Order[];
   orderTrackHistory: OrderDelivery[];
   carts?: CartData[];
+  notifications: Notification[];
 }
 
 const data = json as Root;
@@ -161,6 +176,12 @@ if (data.carts) {
     carts.set(cartData.userId, cartItems);
   });
 }
+const notifications: Notification[] = (
+  data.notifications as Notification[]
+).map((notification) => ({
+  ...notification,
+  category: notification.category as NotificationCategory,
+}));
 
 app.get("/", (_, res) => {
   res.type("text/html").status(200).send(htmlTemplate);
@@ -351,6 +372,59 @@ app.get("/images/:id", (req, res) => {
   const imageBuffer = Buffer.from(image, "base64");
 
   res.type("image/png").status(200).send(imageBuffer);
+});
+
+app.get("/notifications", (_, res) => {
+  res.status(200).send(notifications);
+});
+
+app.get("/notifications/:id", (req, res) => {
+  const { id } = req.params as { id: string };
+
+  const notification = notifications.find((n) => n.id === Number(id));
+
+  if (!notification) {
+    return res.status(404).send({ message: "Notification not found" });
+  }
+
+  res.status(200).send(notification);
+});
+
+app.post("/notifications", (req, res) => {
+  const { title, subtitle, category, date } = req.body as Omit<
+    Notification,
+    "id"
+  >;
+
+  if (!title || !subtitle || !category || !date) {
+    return res.status(400).send({ message: "All fields are required" });
+  }
+
+  const newNotification: Notification = {
+    id: notifications.length
+      ? notifications[notifications.length - 1].id + 1
+      : 1,
+    title,
+    subtitle,
+    category: category as NotificationCategory,
+    date,
+  };
+
+  notifications.push(newNotification);
+
+  res.status(201).send(newNotification);
+});
+
+app.delete("/notifications/:id", (req, res) => {
+  const { id } = req.params as { id: string };
+  const index = notifications.findIndex((n) => n.id === Number(id));
+
+  if (index === -1) {
+    return res.status(404).send({ message: "Notification not found" });
+  }
+
+  const deleted = notifications.splice(index, 1)[0];
+  res.status(200).send({ message: "Deleted successfully", deleted });
 });
 
 app.listen({ port: 3000, host: "0.0.0.0" }, () => {
